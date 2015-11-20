@@ -49,7 +49,7 @@ session_start();
 
 
                             <div class="clearfix">
-                                <label for="files">Files</label>
+                                <label for="files">Bitte wählen Sie Dateien die übermittelt werden sollen.</label>
                                 <div class="input">
                                     <input type="file" name="files[]" id="files" multiple style="width: 410px !important;" />
                                 </div>
@@ -89,7 +89,7 @@ session_start();
                     }
                     $('#fileslist').html(selectedFileList);
                     $('#progress-txt').html('Die von Ihnen agewählten Dateien:');
-                })
+                });
 	
                 //jquery form options
                 var options = { 
