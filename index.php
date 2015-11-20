@@ -91,11 +91,6 @@ session_start();
                     $('#progress-txt').html('Die von Ihnen agewählten Dateien:');
                 });
 	
-                //jquery form options
-                var options = { 
-                    success:       stopProgress, //Once the upload completes stop polling the server
-                    error:		   stopProgress
-                };
 
                 //Add the submit handler to the form
                 $('#upload').submit(function(e){
@@ -125,20 +120,24 @@ session_start();
                                 }
                                 $('#fileslist').html(filelist);
                             }
-                            
-                            //When there is no data the upload is complete
-                            else
-                            {
-                                $('#progress').val('1');
-                                $('#progress-txt').html('Complete');
-                                $('#fileslist > li > img').replaceWith('<span style="font-size: 140%; color: green;"> ✓</span>');
-                                stopProgress();
-                            }
-					
                         })
                     }, 200);
 		
-                    $('#upload').ajaxSubmit(); 
+                    $('#upload').ajaxSubmit({
+                        // Optionen für den jQuery-Ajax-Commit:
+                        success: function(){
+                            $('#progress').val('1');
+                            $('#progress-txt').html('Alle Daten erfolgreich hochgeladen.');
+                            $('#fileslist > li > img').replaceWith('<span style="font-size: 140%; color: green;"> ✓</span>');
+                            stopProgress();
+                        },
+                        error: function(){
+                            $('#progress').val('1');
+                            $('#progress-txt').html('Es ist ein Fehler aufgetreten.');
+                            $('#fileslist > li > img').replaceWith('<span style="font-size: 140%; color: red;"> ✘</span>');
+                            stopProgress();
+                        }
+                    });
                     
                     e.preventDefault();
                 });	
