@@ -83,12 +83,14 @@ session_start();
 
                 $('#files').change(function(){
                     var selectedFileList = '';
+                    var fileListSize = 0;
                     var selectedfiles = $('#files')[0].files;
                     for(var f = 0; f < selectedfiles.length; f++) {
-                        selectedFileList += '<li>' + selectedfiles[f].name + '</li>';
+                        selectedFileList += '<li>' + selectedfiles[f].name + ' ' + extround((selectedfiles[f].size/1024/1024), 100) + ' MB</li>';
+                        fileListSize += extround((selectedfiles[f].size/1024/1024), 100);
                     }
                     $('#fileslist').html(selectedFileList);
-                    $('#progress-txt').html('Die von Ihnen agewählten Dateien:');
+                    $('#progress-txt').html('Die von Ihnen agewählten Dateien: ' + fileListSize + ' MB');
                 });
 	
 

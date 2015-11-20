@@ -1,15 +1,7 @@
 <?php
 session_start();
-/*var_dump($_SESSION);
-var_dump($_FILES);*/
-echo '<pre>';
-print_r($_SESSION);
-
-/*print_r($_FILES);*/
 
 $target_path = "/Users/olaf/uploads/";
-
-/*$target_path = $target_path . basename( $_FILES['files']['name']);*/
 
 if(isset($_FILES['files'])) {
     $name_array = $_FILES['files']['name'];
@@ -25,13 +17,4 @@ if(isset($_FILES['files'])) {
         }
     }
 }
-
-if(move_uploaded_file($_FILES['file1']['tmp_name'], $target_path)) {
-    echo "The file ".  basename( $_FILES['file1']['name']).
-        " has been uploaded";
-} else{
-    echo "There was an error uploading the file, please try again!";
-}
-
 ?>
-</pre>
