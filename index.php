@@ -87,10 +87,10 @@ session_start();
                     var selectedfiles = $('#files')[0].files;
                     for(var f = 0; f < selectedfiles.length; f++) {
                         selectedFileList += '<li>' + selectedfiles[f].name + ' ' + extround((selectedfiles[f].size/1024/1024), 100) + ' MB</li>';
-                        fileListSize += extround((selectedfiles[f].size/1024/1024), 100);
+                        fileListSize += selectedfiles[f].size;
                     }
                     $('#fileslist').html(selectedFileList);
-                    $('#progress-txt').html('Die von Ihnen agewählten Dateien: ' + fileListSize + ' MB');
+                    $('#progress-txt').html('Die von Ihnen agewählten Dateien: ' + extround((fileListSize/1024/1024), 100) + ' MB');
                 });
 	
 
