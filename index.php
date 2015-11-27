@@ -44,7 +44,7 @@ session_start();
 
                         <h2>Upload</h2>
                         <p>Select one or two files to upload (Max total size 2MB)</p>
-                        <form action="/upload.php" method="POST" enctype="multipart/form-data" id="upload">
+                        <form action="/upload.php" method="POST" enctype="multipart/form-data" id="upload" target="uploadResult">
                             <input type="hidden" name="<?php echo ini_get("session.upload_progress.name"); ?>" value="upload" />
 
 
@@ -62,10 +62,13 @@ session_start();
                         <h2>Progress</h2>
                         <progress max="1" value="0" id="progress"></progress>
                         <p id="progress-txt"></p>
+                        <p id="uploadCallback"></p>
+                        <p id="error"></p>
                         <ul id="fileslist"></ul>
                     </div>
                 </div>
             </div>
+            <iframe name="uploadResult" style="display: none" src="upload.php"></iframe>
 
         </article>
 
@@ -96,7 +99,7 @@ session_start();
 
                 //Add the submit handler to the form
                 $('#upload').submit(function(e){
-                	
+
                     //check there is at least one file
                     if($('#files').val() == '')
                     {
@@ -109,7 +112,7 @@ session_start();
                         $.getJSON('/progress.php', function(data){
                             
                             //if there is some progress then update the status
-                            if(data)
+                           /* if(data)
                             {
                                 $('#progress').val(data.bytes_processed / data.content_length);
                                 $('#progress-txt').html('Uploading '+ Math.round((data.bytes_processed / data.content_length) * 100) + '% ');
@@ -121,28 +124,41 @@ session_start();
                                     filelist += '<li>' + data.files[i]['name'] +  done + '</li>';
                                 }
                                 $('#fileslist').html(filelist);
-                            }
-                        })
+                            }*/
+                        });
+
+
                     }, 200);
-		
+
                     $('#upload').ajaxSubmit({
                         // Optionen für den jQuery-Ajax-Commit:
                         success: function(){
+                            stopProgress();
+                        },
+                        error: function(){
+                            stopProgress();
+                        }
+                    });
+
+                        /*$.getJSON('upload.php', function(json){
+
+                            $('#uploadCallback').html(json + ' hallo');
                             $('#progress').val('1');
                             $('#progress-txt').html('Alle Daten erfolgreich hochgeladen.');
                             $('#fileslist > li > img').replaceWith('<span style="font-size: 140%; color: green;"> ✓</span>');
                             stopProgress();
-                        },
-                        error: function(){
+
+                        }).fail(function(jqxhr, textStatus, error){
+
+                            var msg = 'Es ist leider folgender Fehler aufgetreten. "';
+                            $('#error').html(msg + textStatus + ': ' + error +'"');
                             $('#progress').val('1');
-                            $('#progress-txt').html('Es ist ein Fehler aufgetreten.');
-                            $('#fileslist > li > img').replaceWith('<span style="font-size: 140%; color: red;"> ✘</span>');
-                            stopProgress();
-                        }
-                    });
-                    
+                            $('#progress-txt').html('Es ist ein schwerer Systemfehler aufgetreten.');
+                            $('#fileslist > li').children().replaceWith('<span style="font-size: 140%; color: red;"> ✘</span>');
+                        })*/
+
                     e.preventDefault();
-                });	
+                });
             });
 
             function stopProgress()
