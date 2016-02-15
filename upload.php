@@ -3,18 +3,24 @@ session_start();
 header('Content-type: application/json');
 /* Die vom Server zugelassene Größe der uploadbaren
  * Dateimenge geben lassen.
+ * Und die Menge der zugelassenen Dateien für einen
+ * Upload geben lassen (max_file_uploads).
  * */
 $displayMaxSize = ini_get('post_max_size');
+$displayMaxFileUploads = ini_get('max_file_uploads');
 
+/* Ersetzung durch eine übliche Einheitsangabe. */
 switch(substr($displayMaxSize,-1))
 {
-    /* Ersetzung durch eine übliche Einheitsangabe. */
     case 'G':
-        $displayMaxSize = $displayMaxSize . ' Gigabyte';
+        $displayMaxSize = substr($displayMaxSize, 0, -1) . ' Gigabyte';
+        break;
     case 'M':
-        $displayMaxSize = $displayMaxSize . ' Megabyte';
+        $displayMaxSize = substr($displayMaxSize, 0, -1) . ' Megabyte';
+        break;
     case 'K':
-        $displayMaxSize = $displayMaxSize . ' Kilobyte';
+        $displayMaxSize = substr($displayMaxSize, 0, -1) . ' Kilobyte';
+        break;
 }
 
 /* Meldungstexte für $_FILES['userfile']['error']. */
@@ -33,6 +39,7 @@ $uploadMeldung = array(
 );
 
 /* Absoluter Pfad zum Upload Zielverzeichnis */
+/*$target_path = "/Library/Server/Web/Data/Sites/pdf_xml_bilder/";*/
 $target_path = "/Users/olaf/uploads/";
 
 /* Nach einem erfolgreichem Upload in das temporäre Verzeichnis
@@ -53,15 +60,28 @@ if(isset($_FILES['files'])) {
 
     for($i = 0; $i < count($tmp_name_array); $i++){
 
+        /* TODO: Parameter für den Dateinamen aus URL abfragen z.B.:
+         * dev.runze-casper.de/xmlbildereutin/index.php?nummer=2.5
+         * Und wenn dann in $uploadedFiles['files'][$i]['fileName']
+         * für das Response in das UI übergeben.
+         * */
         if(move_uploaded_file($tmp_name_array[$i], $target_path . $name_array[$i])){
             /* Bei einem erfolgreichem Speicher/Verschieben wird
              * es an dieser Stelle im Arry $uploadedFiles notiert.
              * Ansonsten wird im Elsezweig die entsprechende Fehler-
              * meldung gespeichert und der index.php übergeben.
+             * ************************************************ */
+
+            /* TODO: erlaubte Dateitypen für InDesign mitels ($type_array) abfragen und
+             * in $uploadedFiles['files'][$i]['fileStatus'] als Fehler ausgeben.
              * */
-            $uploadedFiles['files'][$i] = $name_array[$i] . ' '
-                                        . round(($size_array[$i]/1024/1024), 2) . ' MB, '
-                                        . $uploadMeldung[$error_array[$i]];
+
+            $uploadedFiles['files'][$i]['fileName']     = $name_array[$i];
+            $uploadedFiles['files'][$i]['fileTmpName']  = $tmp_name_array[$i];
+            $uploadedFiles['files'][$i]['fileType']     = $type_array[$i];
+            $uploadedFiles['files'][$i]['fileSize']     = $size_array[$i];
+            $uploadedFiles['files'][$i]['fileStatus']   = $uploadMeldung[$error_array[$i]];
+
         } else {
             /* Gibt den Grund als Fehlermeldungaus weshalb diese
              * Datei nicht auf dem Server gespeichert werden konnte
@@ -78,7 +98,6 @@ if(isset($_FILES['files'])) {
     }
     /* Übergabe der Meldungen zum Upload. */
     echo json_encode($uploadedFiles);
-    /*print_r($uploadedFiles);*/
 }
 
 /* Wenn der Server den Upload nicht ausführt und dieses nur als Warnung
@@ -91,8 +110,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) &&
     empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
 
     $error  =   'Die von Ihnen gesendeten Daten haben aber ' .
-                round(($_SERVER['CONTENT_LENGTH']/1024/1024), 2) .
-                ' Megabyte.';
+        round(($_SERVER['CONTENT_LENGTH']/1024/1024), 2) .
+        ' Megabyte.';
 
     $uploadedFiles['uploadError'] = $uploadMeldung[1] . ' ' . $error;
 
