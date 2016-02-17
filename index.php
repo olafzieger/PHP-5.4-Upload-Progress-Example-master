@@ -109,7 +109,7 @@ switch(substr($displayMaxSize,-1))
         <div class="col-xs-12 col-md-8">
 
             <h2>Datentransferserver</h2>
-            <p>Select one file to upload (Max total size <?=$displayMaxSize;?>).</p>
+            <p>Select files to upload (Max total size <?=$displayMaxSize;?>).</p>
             <p>
                 Bitte nur Maximal <?=$displayMaxFileUploads;?> Dateien auswählen. Um mehrere Dateien zu selektieren
                 halten Sie in OS&nbsp;X&nbsp;<kbd>cmd&nbsp;⌘</kbd> bzw. in Windows&nbsp;<kbd>Strg</kbd> beim auswählen gedrückt.
@@ -118,7 +118,9 @@ switch(substr($displayMaxSize,-1))
                 <input type="hidden" name="<?php echo ini_get("session.upload_progress.name"); ?>" value="upload" />
 
                 <div class="form-group">
-                    <label for="files" class="col-sm-3 control-label">Bildatei für Ihren Eintrag</label>
+                    <label for="files" class="col-sm-3 control-label">
+                        Bitte Dateien auswählen die Sie versenden wollen.
+                    </label>
 
                     <div class="col-sm-9">
                         <div class="input-group">
